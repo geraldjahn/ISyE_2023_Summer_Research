@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Simple design of a steady state M/M/1 Queue using Lindley equation.
-
+# The term M/M/1 is used only to imply that the system contains one input and output ports.
 # Lindley Equation: Computes the queue length with a discrete-time stochastic process.
 
 def perform_bernoulli_trial(p):
@@ -22,8 +22,8 @@ y = []
 # Simulation: This file needs to run a parameter (arrival rate) through the terminal.
 # The simulation aims to compute the average queue length in respect to the traffic intensity.
 for rho in np.arange(0.9, 1.0, 0.01):
-    mu = lamb / rho             # average service rate: mean number of dequeues made per unit time, (0.0, 1.0)
-    N = int(10 / ((1 - rho) ** 2))  # sample size
+    mu = lamb / rho     # average service rate: mean number of dequeues made per unit time, (0.0, 1.0)
+    N = 1000000         # Sample size: needed to be fixed
     queue_length = []
     queue = []
     wait = 0
@@ -45,11 +45,14 @@ for rho in np.arange(0.9, 1.0, 0.01):
         if t > N / 2:
             queue.append(wait)
 
+    mean = np.average(queue)
+
     # Sampling the Queue-Length statistics from the simulation
     print("Traffic Intensity: " + str(rho))
-    print("Average Queue Length: " + str(np.average(queue)))
+    print("Average Queue Length: " + str(mean))
+    print("E[q(t)] / (1 / (1 - ρ)): " + str(mean / (1 / (1 - rho))))    # testing convergence of the constant
     print("--------------------------------------------------")
-    y.append(np.average(queue))
+    y.append(mean)
 
 plt.title("Average Queue Length relative to Traffic Intensity")
 plt.plot(x, y)
