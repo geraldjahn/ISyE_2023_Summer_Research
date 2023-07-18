@@ -17,9 +17,10 @@ Creates a 3x3 matrix with independent dynamic queues
 '''
 packetSwitch = np.zeros((3,3))
 
-lamb = float(sys.argv[1])   # arrival rate
-r = 0.7   # traffic intensity
-mu = lamb / r       # service trial success rate -> here, 1 assumes that it dequeues every phase when the VOQ is not empty
+#lamb = float(sys.argv[1])   # arrival rate
+lamb = 1 / 6
+rho = 1 / 2   # traffic intensity
+mu = lamb / rho * 3       # service trial success rate -> here, 1 assumes that it dequeues every phase when the VOQ is not empty
 
 N = 10000
 
@@ -67,8 +68,9 @@ for t in range(N):
         # removal & update queue length
         for remove in maxWeight:
             remWeight += packetSwitch[remove[0]][remove[1]]
-            packetSwitch[remove[0]][remove[1]] -= 1
-            size -= 1
+            if packetSwitch[remove[0]][remove[1]] > 0:  # edge case of removing from zeros.
+                    packetSwitch[remove[0]][remove[1]] -= 1
+                    size -= 1
         print("The total weight of jobs chosen in Phase %d's schedule is %d." % (t, remWeight))
 
     # Recording Process
