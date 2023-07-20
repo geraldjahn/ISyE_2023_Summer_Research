@@ -39,7 +39,7 @@ sample = []
 
 # Simulation
 for t in range(N):
-
+    print(f"<<Phase {t}>>")
     '''
     Arrival: Processed after Passing the Bernoulli trial
     '''
@@ -51,14 +51,15 @@ for t in range(N):
                 packetSwitch[x][y] += 1
                 size += 1
                 add += 1
-
+    
+    # Recording the Changes in the Switch. These lines can be ignored.
     print(f"\n{add} new jobs were added.")
-    print("Current status of the switch is:")   # remove this later
+    print("Current status of the switch is:") 
     print(packetSwitch)
 
     
     '''
-    Service: also bernoulli trial
+    Service: Processed after passing the Bernoulli trial, but this simulation will always run the service.
     if not empty, process the Hungarian algorithm to find Max-Weight permutation matrix for selection
     set the packetSwitch of selected VOQs to zero after service
     '''
@@ -79,18 +80,24 @@ for t in range(N):
             if packetSwitch[remove[0]][remove[1]] > 0:  # edge case of removing from zeros.
                     packetSwitch[remove[0]][remove[1]] -= 1
                     size -= 1
-        print(f"The total weight of jobs chosen in Phase {t}'s schedule is {remWeight}.")
+
+        # Recording the Schedule's Weight
         # Hypothesis: W(t) --> λn
+        print(f"The total weight of jobs chosen in Phase {t}'s schedule is {remWeight}.")
+        
 
         # Additional Task 1. Compute the total number of non-empty queues 
         filled_queues = packetSwitch[np.where(packetSwitch > 0)]
-        print(f"There is/are {filled_queues.size} non-empty queue(s) in the switch in phase {t}.")
+        print(f"\nThere is/are {filled_queues.size} non-empty queue(s) in the switch in phase {t}.")
 
         # 2. Compute the maximum sum between the maximum sum of columns and that of rows
-        # Hypothesis: C(t) --> ln(n)
         row_sums = np.sum(packetSwitch, axis = 1)
         col_sums = np.sum(packetSwitch, axis = 0)
         max_sum = np.maximum(np.max(row_sums), np.max(col_sums))
+
+        # 2 - i) Finding the queue with maximum weight (jobs) loaded
+        # Hypothesis: C(t) --> ln(n)
+        print(f"The queue with the maximum weight loaded has {np.max(row_sums)} jobs.")
         print(f"The maximum axial sum recorded in the matrix in phase {t} is {max_sum}.")
 
     # Recording Process --> Actual Queue Length
