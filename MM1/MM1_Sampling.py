@@ -23,7 +23,7 @@ y = []
 # The simulation aims to compute the average queue length in respect to the traffic intensity.
 for rho in np.arange(0.9, 1.0, 0.01):
     mu = lamb / rho     # average service rate: mean number of dequeues made per unit time, (0.0, 1.0)
-    N = 100000         # Sample size: needed to be fixed
+    N = 100000          # Sample size: needed to be fixed
     queue_length = []
     queue = []
     wait = 0

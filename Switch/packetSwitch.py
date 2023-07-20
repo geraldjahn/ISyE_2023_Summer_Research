@@ -20,7 +20,7 @@ qlen = []
 
 # Simulation
 for rho in np.arange(0.9, 1.0, 0.01):   # rho: traffic intensity, noted as (ρ).
-    mu = lamb / rho                     # service trial success rate -> here, 1 assumes that it dequeues every phase when the VOQ is not empty
+    mu = lamb / rho * 3                  # service trial success rate -> here, 1 assumes that it dequeues every phase when the VOQ is not empty
     size = 0
     queue_length = []
     sample = []
@@ -49,10 +49,11 @@ for rho in np.arange(0.9, 1.0, 0.01):   # rho: traffic intensity, noted as (ρ).
 
         # Additional Tasks
         # 1. Compute the total number of non-empty queues 
-        '''empty_queues = packetSwitch[np.where(packetSwitch == 0)]
-        print(f"There is/are {empty_queues.size} empty queue(s) in the switch in phase {t}.")'''
+        filled_queues = packetSwitch[np.where(packetSwitch > 0)]
+        print(f"There is/are {filled_queues.size} non-empty queue(s) in the switch in phase {t}.")
 
         # 2. Compute the maximum sum between the maximum sum of columns and that of rows
+        # Hypothesis: C(t) --> ln(n)
         '''row_sums = np.sum(packetSwitch, axis = 1)
         col_sums = np.sum(packetSwitch, axis = 0)
         max_sum = np.maximum(np.max(row_sums), np.max(col_sums))
@@ -82,6 +83,7 @@ for rho in np.arange(0.9, 1.0, 0.01):   # rho: traffic intensity, noted as (ρ).
                     packetSwitch[remove[0]][remove[1]] -= 1
                     size -= 1
             #print(f"The total weight of jobs chosen in Phase {t}'s schedule is {remWeight}.")
+            # Hypothesis W(t) --> λn
 
         # Sampling Process
         queue_length.append(size)   # Actual Population
