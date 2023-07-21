@@ -13,7 +13,6 @@ def perform_bernoulli_trial(p):
 
 '''
 Simple Packet Switch with size 3, initially empty.
-Creates a 3x3 matrix with independent dynamic queues
 '''
 packetSwitch = np.zeros((3,3))
 
@@ -104,7 +103,6 @@ for t in range(N):
     actual_queue.append(size)
 
 # Overview
-print(f"\nWhile the traffic intensity is {rho}, the average queue length for each VOQ is .")
 plt.title("Average Queue Length over Time")
 plt.plot(range(N), actual_queue)
 plt.xlabel("t")
