@@ -75,8 +75,8 @@ for t in range(N):
 
         # removal & update queue length
         for remove in maxWeight:
-            remWeight += packetSwitch[remove[0]][remove[1]]
             if packetSwitch[remove[0]][remove[1]] > 0:  # edge case of removing from zeros.
+                    remWeight += packetSwitch[remove[0]][remove[1]]
                     packetSwitch[remove[0]][remove[1]] -= 1
                     size -= 1
 
@@ -89,15 +89,17 @@ for t in range(N):
         filled_queues = packetSwitch[np.where(packetSwitch > 0)]
         print(f"\nThere is/are {filled_queues.size} non-empty queue(s) in the switch in phase {t}.")
 
-        # 2. Compute the maximum sum between the maximum sum of columns and that of rows
+        # 2. Clearing Time: Compute the maximum sum between the maximum sum of columns and that of rows
+        # Hypothesis: C(t) --> ln(n)
         row_sums = np.sum(packetSwitch, axis = 1)
         col_sums = np.sum(packetSwitch, axis = 0)
-        max_sum = np.maximum(np.max(row_sums), np.max(col_sums))
+        maxWeight_queue = np.max(row_sums)
+        max_sum = np.maximum(maxWeight_queue, np.max(col_sums))
 
         # 2 - i) Finding the queue with maximum weight (jobs) loaded
-        # Hypothesis: C(t) --> ln(n)
-        print(f"The queue with the maximum weight loaded has {np.max(row_sums)} jobs.")
-        print(f"The maximum axial sum recorded in the matrix in phase {t} is {max_sum}.")
+        # Hypothesis: 1 / 1 - ρ
+        print(f"The queue with the maximum weight loaded has {maxWeight_queue} jobs.")
+        print(f"The Clearing Time recorded in the matrix in phase {t} is {max_sum}.")
 
     # Recording Process --> Actual Queue Length
     actual_queue.append(size)
