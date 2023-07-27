@@ -6,7 +6,7 @@ from munkres import Munkres
 '''
 This code observes several quantities that can be measured from the simulation of queueing with a single n x n switch.
 
-The simulation is assuming the size of the switch is small (< 40) that sampling is made from the n^2 / (1 - ρ)^2 th datum
+The simulation is assuming the size of the switch is small (< 30) that sampling is made from the n^2 / (1 - ρ)^2 th datum
 The  n^2 / (1 - ρ)^2 is the value
 '''
 
@@ -20,8 +20,9 @@ def perform_bernoulli_trial(p):
 
 '''
 By switching the value of n below, the code will run simulation with different sizes of switches.
+The recommended size for the simulation is below 30.
 '''
-n = 20       # Size of the Switch
+n = 15       # Size of the Switch
 
 '''
 Simple Packet Switch with size n, initially empty.
