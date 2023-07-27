@@ -1,5 +1,4 @@
 import numpy as np
-import sys
 import random
 import matplotlib.pyplot as plt
 from munkres import Munkres
@@ -12,101 +11,152 @@ def perform_bernoulli_trial(p):
     return random.random() < p
 
 '''
-Simple Packet Switch with size 3, initially empty.
-Creates a 3x3 matrix with independent dynamic queues
+** IMPORTANT **
+
+This file is highly recommended to run in PACE. The simulation is not adequate to be run in household computers.
 '''
-packetSwitch = np.zeros((3,3))
 
 '''
-Independent Variable: Traffic Intensity
-* This simulation is setting the service rate to a constant value 1.
+Independent Variable: Switch Size (n)
+Constants: Traffic Intensity, Service Rate
 
 Constraints:
-    1. the n x n constant matrix with the value lambda must be doubly substochastic. <=> λ <= 1 / 3
+    1. the n x n constant matrix with the value lambda must be doubly substochastic.
     2. the traffic intensity and the derived service rate must have a value between [0, 1).
 '''
+x_n = list(range(2, 1025))
 
-rho = float(sys.argv[1])    # traffic intensity
-lamb = rho / 3              # arrival trial success rate
-mu = 1                      # service trial success rate -> here, 1 assumes that it dequeues every phase when the VOQ is not empty.
+total_queue_length = []
+schedule_weight = []
+clear_time = []
+non_empty_queue = []
+max_job_queue = []
 
-N = 10000
-
-m = Munkres()
-actual_queue = []
-size = 0
-sample = []
-
-# Simulation
-for t in range(N):
-    print(f"<<Phase {t}>>")
+for n in x_n:   # value of n for n x n switch. n: [2, 1024]
     '''
-    Arrival: Processed after Passing the Bernoulli trial
+    Simple Packet Switch with size n, initially empty.
+    Creates an n x n matrix.
     '''
-    add = 0
-    for x in range(len(packetSwitch)):
-        for y in range(len(packetSwitch[x])):
-            if perform_bernoulli_trial(lamb):
-                # weight of the job is fixed to 1.
-                packetSwitch[x][y] += 1
-                size += 1
-                add += 1
-    
-    # Recording the Changes in the Switch. These lines can be ignored.
-    print(f"\n{add} new jobs were added.")
-    print("Current status of the switch is:") 
-    print(packetSwitch)
+    nSwitch = np.zeros((n,n))
 
-    
-    '''
-    Service: Processed after passing the Bernoulli trial, but this simulation will always run the service.
-    if not empty, process the Hungarian algorithm to find Max-Weight permutation matrix for selection
-    set the packetSwitch of selected VOQs to zero after service
-    '''
-    if size > 0 and perform_bernoulli_trial(mu):
+    rho = 0.7           # traffic intensity (load)
+    lamb = rho / n      # arrival trial success rate
+    mu = 1              # service trial success rate -> here, 1 assumes that it dequeues every phase when the VOQ is not empty.
 
-        print("\nRemoval is proceeded.")
+    N = 10000           # if the switch's sizes increase, the value needs to be increased to have all switches' simulation to reach equilibrium.
 
-        # returns a list of tuples of the matrix's corrdinates
-        maxWeight = m.compute((-1 * packetSwitch))
-        print(f"The schedule for phase {t} is {maxWeight}.")
+    m = Munkres()
+    size = 0            # Variable counting the Total Queue Length
 
-        # Variable saving the weight of chosen schedule (Purpose: eliminates future inefficiencies)
-        remWeight = 0
+    tql_mean = []
+    sw_mean = []
+    ct_mean = []
+    neq_mean = []
+    mjq_mean = []
 
-        # removal & update queue length
-        for remove in maxWeight:
-            remWeight += packetSwitch[remove[0]][remove[1]]
-            if packetSwitch[remove[0]][remove[1]] > 0:  # edge case of removing from zeros.
-                    packetSwitch[remove[0]][remove[1]] -= 1
-                    size -= 1
-
-        # Recording the Schedule's Weight
-        # Hypothesis: W(t) --> λn
-        print(f"The total weight of jobs chosen in Phase {t}'s schedule is {remWeight}.")
+    # Simulation for 1 switch
+    for t in range(N):
+        '''
+        Arrival: Processed after Passing the Bernoulli trial
+        '''
+        for x in range(len(nSwitch)):
+            for y in range(len(nSwitch[x])):
+                if perform_bernoulli_trial(lamb):
+                    # weight of the job is fixed to 1.
+                    nSwitch[x][y] += 1
+                    size += 1
         
+        '''
+        Service: Processed after passing the Bernoulli trial, but this simulation will always run the service.
+        if not empty, process the Hungarian algorithm to find Max-Weight permutation matrix for selection
+        set the packetSwitch of selected VOQs to zero after service
+        '''
+        if size > 0 and perform_bernoulli_trial(mu):
 
-        # Additional Task 1. Compute the total number of non-empty queues 
-        filled_queues = packetSwitch[np.where(packetSwitch > 0)]
-        print(f"\nThere is/are {filled_queues.size} non-empty queue(s) in the switch in phase {t}.")
+            # returns a list of tuples of the matrix's corrdinates
+            maxWeight = m.compute((-1 * nSwitch))
 
-        # 2. Compute the maximum sum between the maximum sum of columns and that of rows
-        row_sums = np.sum(packetSwitch, axis = 1)
-        col_sums = np.sum(packetSwitch, axis = 0)
-        max_sum = np.maximum(np.max(row_sums), np.max(col_sums))
+            # Variable saving the weight of chosen schedule (Purpose: eliminates future inefficiencies)
+            remWeight = 0
 
-        # 2 - i) Finding the queue with maximum weight (jobs) loaded
-        # Hypothesis: C(t) --> ln(n)
-        print(f"The queue with the maximum weight loaded has {np.max(row_sums)} jobs.")
-        print(f"The maximum axial sum recorded in the matrix in phase {t} is {max_sum}.")
+            # removal & update queue length
+            for remove in maxWeight:
+                if nSwitch[remove[0]][remove[1]] > 0:  # edge case of removing from zeros.
+                        remWeight += nSwitch[remove[0]][remove[1]]
+                        nSwitch[remove[0]][remove[1]] -= 1
+                        size -= 1
 
-    # Recording Process --> Actual Queue Length
-    actual_queue.append(size)
 
-# Overview
-print(f"\nWhile the traffic intensity is {rho}, the average queue length for each VOQ is .")
-plt.title("Average Queue Length over Time")
-plt.plot(range(N), actual_queue)
+            '''
+            Recording Quantities: Conditional Statement Needed!!
+            '''
+
+            # Total Queue Length
+            tql_mean.append(size)
+
+            # Schedule's Weight
+            # Hypothesis: lim t -> inf W(t) = W(n) --> λn
+            sw_mean.append(remWeight)
+            remWeight = 0       # Edge Case of having an empty switch
+            
+
+            # Additional Task 1. Total number of non-empty queues
+            filled_queues = nSwitch[np.where(nSwitch > 0)]
+            neq_mean.append(filled_queues.size)
+
+            # Additional Task 2. Clearing Time: Compute the maximum sum between the maximum sum of columns and that of rows
+            # Hypothesis: C(n) --> ln(n)
+                # 2 - i) Finding the length of the VOQ with max weight
+                # Hypothesis: M(n) --> 1 / 1 - ρ
+            row_sums = np.sum(nSwitch, axis = 1)
+            col_sums = np.sum(nSwitch, axis = 0)
+            maxWeight_queue = np.max(row_sums)
+            max_sum = np.maximum(maxWeight_queue, np.max(col_sums))
+
+            ct_mean.append(max_sum)
+            mjq_mean.append(maxWeight_queue)
+
+        # Recording Process --> Sampling is needed (Collecting Data Once the system reaches the equilibrium)
+        # Assumption: N_eq = C * n / (1 - ρ)^2
+        # if t >= k: k is an equilibrium constant
+
+    # Recording the Overview Statistics
+    total_queue_length.append(np.average(tql_mean))
+    schedule_weight.append(np.average(sw_mean))
+    non_empty_queue.append(np.average(neq_mean))
+    clear_time.append(np.average(ct_mean))
+    max_job_queue.append(np.average(mjq_mean))
+
+
+# Data Visualization
+plt.figure(1)
+plt.title("Total Queue Length")
 plt.xlabel("t")
-plt.ylabel("μ[q(t)]")
+plt.ylabel("q(t)")
+plt.plot(x_n, total_queue_length)
+
+plt.figure(2)
+plt.title("Schedule's Weight")
+plt.xlabel("t")
+plt.ylabel("W(t)")
+plt.plot(x_n, schedule_weight)
+
+plt.figure(3)
+plt.title("Total Number of Non-Empty Queues")
+plt.xlabel("t")
+plt.ylabel("E(t)")
+plt.plot(x_n, non_empty_queue)
+
+plt.figure(4)
+plt.title("Clearing Time")
+plt.xlabel("t")
+plt.ylabel("C(t)")
+plt.plot(x_n, clear_time)
+
+plt.figure(5)
+plt.title("Weight of the Max-Weight Queue")
+plt.xlabel("t")
+plt.ylabel("M(t)")
+plt.plot(x_n, max_job_queue)
+
 plt.show()
