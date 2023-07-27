@@ -21,7 +21,7 @@ def perform_bernoulli_trial(p):
 '''
 By switching the value of n below, the code will run simulation with different sizes of switches.
 '''
-n = 5       # Size of the Switch
+n = 20       # Size of the Switch
 
 '''
 Simple Packet Switch with size n, initially empty.
@@ -114,11 +114,13 @@ for t in range(N):
         max_job_queue.append(maxWeight_queue)
 
 # Overview
-print(f"Mean Queue Length for Switch with size {n}: {np.average(total_queue_length)}\n")
-print(f"Mean Weight of Schedule for Switch with size {n}: {np.average(schedule_weight)}\n")
-print(f"Mean number of Non-Empty Queues for Switch with size {n}: {np.average(non_empty_queue)}\n")
-print(f"Mean Clearing Time for Switch with size {n}: {np.average(clear_time)}\n")
-print(f"Mean Weight of the Max-Weighted Queue for Switch with size {n}: {np.average(max_job_queue)}")
+print(f"\n<<Statistics for {n} x {n} Switch>>")
+print("--------------------------------------------------------------")
+print(f"Mean Queue Length for Switch with size {n}: {np.average(total_queue_length)}")
+print(f"Mean Weight of Schedule for Switch with size {n}: {np.average(schedule_weight)}")
+print(f"Mean number of Non-Empty Queues for Switch with size {n}: {np.average(non_empty_queue)}")
+print(f"Mean Clearing Time for Switch with size {n}: {np.average(clear_time)}")
+print(f"Mean Weight of the Max-Weighted Queue for Switch with size {n}: {np.average(max_job_queue)}\n")
 
 # Data Visualization
 plt.figure(1)
