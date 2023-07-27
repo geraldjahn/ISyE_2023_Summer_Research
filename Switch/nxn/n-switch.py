@@ -17,14 +17,15 @@ This file is highly recommended to run in PACE. The simulation is not adequate t
 '''
 
 '''
-Independent Variable: Switch Size (n)
+Independent Variable: Switch Size [n]
 Constants: Traffic Intensity, Service Rate
 
-Constraints:
-    1. the n x n constant matrix with the value lambda must be doubly substochastic.
-    2. the traffic intensity and the derived service rate must have a value between [0, 1).
+Currently, the range is set to [2, 10) for preventing overload issues.
 '''
-x_n = list(range(2, 1025))
+x_n = list(range(2, 10))      # value of n for n x n switch. n: [2, 1024]
+
+rho = 0.7                       # traffic intensity (load)
+mu = 1                          # service trial success rate -> here, 1 assumes that it dequeues every phase when the VOQ is not empty.
 
 total_queue_length = []
 schedule_weight = []
@@ -32,16 +33,21 @@ clear_time = []
 non_empty_queue = []
 max_job_queue = []
 
-for n in x_n:   # value of n for n x n switch. n: [2, 1024]
+for n in x_n:
+
     '''
     Simple Packet Switch with size n, initially empty.
     Creates an n x n matrix.
     '''
     nSwitch = np.zeros((n,n))
 
-    rho = 0.7           # traffic intensity (load)
+    '''
+    Constraints:
+    1. the n x n constant matrix with the value lambda must be doubly substochastic.
+    2. the traffic intensity and the derived service rate must have a value between [0, 1).
+    '''
     lamb = rho / n      # arrival trial success rate
-    mu = 1              # service trial success rate -> here, 1 assumes that it dequeues every phase when the VOQ is not empty.
+    
 
     N = 10000           # if the switch's sizes increase, the value needs to be increased to have all switches' simulation to reach equilibrium.
 

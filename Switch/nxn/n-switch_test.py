@@ -22,7 +22,7 @@ def perform_bernoulli_trial(p):
 By switching the value of n below, the code will run simulation with different sizes of switches.
 The recommended size for the simulation is below 30.
 '''
-n = 15       # Size of the Switch
+n = 28       # Size of the Switch
 
 '''
 Simple Packet Switch with size n, initially empty.
