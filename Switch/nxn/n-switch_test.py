@@ -22,7 +22,7 @@ def perform_bernoulli_trial(p):
 By switching the value of n below, the code will run simulation with different sizes of switches.
 The recommended size for the simulation is below 30.
 '''
-n = 28       # Size of the Switch
+n = 64       # Size of the Switch
 
 '''
 Simple Packet Switch with size n, initially empty.
@@ -41,8 +41,9 @@ rho = 0.7                   # traffic intensity
 lamb = rho / n              # arrival trial success rate
 mu = 1                      # service trial success rate
 
-N = 10000
-k = int(n ** 2 / (1 - rho) ** 2)        # Equilibrium Constant
+N = max(5000, int(2 * n ** 2 / (1 - rho)))
+k = 0
+#int(N / 2)             # Eq. Constant
 
 m = Munkres()
 size = 0                    # Variable Counting the Total Queue Length
@@ -51,7 +52,7 @@ total_queue_length = []
 schedule_weight = []
 non_empty_queue = []
 clear_time = []
-max_job_queue = []
+max_length_voq = []
 
 # Simulation
 for t in range(N):
@@ -108,11 +109,10 @@ for t in range(N):
             # Hypothesis: M(t) --> 1 / 1 - ρ
         row_sums = np.sum(packetSwitch, axis = 1)
         col_sums = np.sum(packetSwitch, axis = 0)
-        maxWeight_queue = np.max(row_sums)
-        max_sum = np.maximum(maxWeight_queue, np.max(col_sums))
+        max_sum = np.maximum(np.max(row_sums), np.max(col_sums))
 
         clear_time.append(max_sum)
-        max_job_queue.append(maxWeight_queue)
+        max_length_voq.append(np.amax(packetSwitch))
 
 # Overview
 print(f"\n<<Statistics for {n} x {n} Switch>>")
@@ -121,7 +121,7 @@ print(f"Mean Queue Length for Switch with size {n}: {np.average(total_queue_leng
 print(f"Mean Weight of Schedule for Switch with size {n}: {np.average(schedule_weight)}")
 print(f"Mean number of Non-Empty Queues for Switch with size {n}: {np.average(non_empty_queue)}")
 print(f"Mean Clearing Time for Switch with size {n}: {np.average(clear_time)}")
-print(f"Mean Weight of the Max-Weighted Queue for Switch with size {n}: {np.average(max_job_queue)}\n")
+print(f"Mean Weight of the Max-Weighted Queue for Switch with size {n}: {np.average(max_length_voq)}\n")
 
 # Data Visualization
 plt.figure(1)
@@ -152,6 +152,8 @@ plt.figure(5)
 plt.title("Weight of the Max-Weight Queue")
 plt.xlabel("t")
 plt.ylabel("M(t)")
-plt.plot(range(k, N), max_job_queue)
+plt.plot(range(k, N), max_length_voq)
+
+
 
 plt.show()
