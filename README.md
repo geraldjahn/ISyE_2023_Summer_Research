@@ -1,9 +1,12 @@
 ﻿# 2023 ISyE Undergraduate Reserach Scholar's Program
-Communication Networks
+## Behaviors of Markov-Modulated Switches
+### Reference
+[Communication Networks](https://sites.google.com/view/comm-networks) - R.Srikant and Lei Ying
 
+### Simulation
 __MM1 queue:__ Simple design of M/M/1 Queue Simulation with Bernoulli trials using Lindley's Equation
 
-__Switch:__ Simulation of Packet Switch
+__Switch:__ Simulation of Bernoulli Switches using Hungarian algorithm for scheduling. The simulation handles switches with small sizes. (n < 128)
 
   - **3x3**: Sample code of a simple packet switch with size 3.
   - **nxn**: Main Simulation of testing the behaviors of quantities observed with n x n switches.
