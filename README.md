@@ -4,7 +4,7 @@
 [Communication Networks](https://sites.google.com/view/comm-networks) - R.Srikant and Lei Ying
 
 ### Simulation
-__MM1 queue:__ Simple design of M/M/1 Queue Simulation with Bernoulli trials using Lindley's Equation
+__MM1:__ Simple design of single-server queue simulation with Bernoulli trials using Lindley's Equation
 
 __Switch:__ Simulation of Bernoulli Switches using Hungarian algorithm for scheduling. The simulation handles switches with small sizes. (n < 128)
 
