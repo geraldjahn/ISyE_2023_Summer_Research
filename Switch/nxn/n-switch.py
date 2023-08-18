@@ -98,7 +98,7 @@ for n in x_n:
 
 
         '''
-        Recording Quantities: Conditional Statement Needed!!
+        Recording Observables
         '''
         if t >= k:
             # Total Queue Length
