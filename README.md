@@ -4,7 +4,7 @@
 [Communication Networks](https://sites.google.com/view/comm-networks) - R.Srikant and Lei Ying
 
 ### Acknowledgement
-This research was supported in part through research cyberinfrastructure resources and services provided bythe Partnership for an Advanced Computing Environment (PACE) at the Georgia Institute of Technology, Atlanta, Georgia, USA.
+This research was supported in part through research cyberinfrastructure resources and services provided by the Partnership for an Advanced Computing Environment (PACE) at the Georgia Institute of Technology, Atlanta, Georgia, USA.
 
 ### Simulation
 __MM1:__ Simple design of single-server queue simulation with Bernoulli trials using Lindley's Equation
