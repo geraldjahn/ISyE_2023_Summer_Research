@@ -149,7 +149,7 @@ plt.ylabel("C(t)")
 plt.plot(range(k, N), clear_time)
 
 plt.figure(5)
-plt.title("Weight of the Max-Weight Queue")
+plt.title("Length of the Max-Length Virtual Output Queue")
 plt.xlabel("t")
 plt.ylabel("M(t)")
 plt.plot(range(k, N), max_length_voq)
